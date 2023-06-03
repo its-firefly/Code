@@ -2,10 +2,10 @@ import numpy as np
 from scipy.optimize import fsolve
 
 def objfunc(x, t_exp):
-    t_analytical = optim(x[0],x[1],x[2],x[3], x[4])
+    t_analytical = optim(x[0],x[1],x[2],x[3], x[4],x[5])
     return np.mean((t_analytical - t_exp)**2)    
 
-def optim(PCM_k, PCM_c, PCM_h, co2_h, coeff):
+def optim(PCM_k, PCM_c, PCM_rho, PCM_h, co2_h, coeff):
 
     def diffusivity(k,rho,cp):
         return k/(rho*cp)
@@ -15,19 +15,13 @@ def optim(PCM_k, PCM_c, PCM_h, co2_h, coeff):
     # Outer Insulation
     minWool_t = 50e-3
     minWool_k = 34e-3
-    minWool_rho = 160.
+    minWool_rho = 45.
     minWool_cp = 1030.
     minWool_tempInit = 18
 
-    # PolyPropylene 
-    PP_t = 3.5e-3
-    PP_k = 34e-3
-    PP_rho = 905.
-    PP_c = 1920.
-
     # Dry Ice
     co2_t = 30e-3
-    co2_k = 16e-3
+    co2_k = 146e-4
     co2_cp = 0.658e3
     co2_rho = 1.977
     # co2_h = 0.1
@@ -39,12 +33,6 @@ def optim(PCM_k, PCM_c, PCM_h, co2_h, coeff):
     # PCM_c = 2
     # PCM_h = 3
     PCM_t = 30e-3
-    # PCM_cp_liq = 3.40
-    # PCM_cp_sol = 1.87
-    # PCM_k_liq = 0.53
-    # PCM_k_sol = 5.26
-    # PCM_lh = 327.
-    PCM_rho = 1043.
     PCM_tempInit = -25.
 
     # Outside/ Ambient parameters
@@ -55,7 +43,6 @@ def optim(PCM_k, PCM_c, PCM_h, co2_h, coeff):
 
     minWool_Diff = diffusivity(minWool_k,minWool_rho,minWool_cp)
     co2_diff = diffusivity(co2_k,co2_rho,co2_cp)
-    PP_diff = diffusivity(PP_k, PP_rho, PP_c)
     PCM_diff = diffusivity(PCM_k, PCM_rho, PCM_c)
 
 
@@ -87,7 +74,7 @@ def optim(PCM_k, PCM_c, PCM_h, co2_h, coeff):
     U2,R2 = eigenRoots(biot_co2)
     U3,R3 = eigenRoots(biot_PCM)
 
-    for t1 in range(0,3023):
+    for t1 in range(0,1800):
         t = t1*60
         theta = 0.0
         for i in range (0,100):
